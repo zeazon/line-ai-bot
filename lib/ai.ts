@@ -106,7 +106,8 @@ export async function generateReply(s: Settings, system: string, messages: ChatM
       if (key) headers.Authorization = `Bearer ${key}`;
       if (base.includes('openrouter.ai')) {
         headers['HTTP-Referer'] = process.env.APP_URL || 'https://vercel.app';
-        headers['X-Title'] = s.botName;
+        // HTTP header ใส่ได้แค่ตัวอักษรภาษาอังกฤษ — ชื่อบอทภาษาไทยจะทำให้ error
+        headers['X-Title'] = /^[\x20-\x7E]+$/.test(s.botName) ? s.botName : 'LINE AI Bot';
       }
       const data = await postJSON(`${base}/chat/completions`, headers, {
         model,
